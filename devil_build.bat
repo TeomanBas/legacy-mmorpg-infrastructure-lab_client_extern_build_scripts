@@ -1,0 +1,187 @@
+@echo off
+setlocal enabledelayedexpansion
+
+echo =====================================
+echo         DEVIL BUILD SCRIPT
+echo =====================================
+
+REM =========================
+REM ROOT PATH
+REM =========================
+
+set SCRIPT_DIR=%~dp0
+
+for %%I in ("%SCRIPT_DIR%..") do (
+set ROOT_DIR=%%~fI
+)
+
+set SOURCE_DIR=%ROOT_DIR%\DevIL\DevIL
+set BUILD_ROOT=%ROOT_DIR%\build\DevIL
+
+echo Root   : %ROOT_DIR%
+echo Source : %SOURCE_DIR%
+echo Build  : %BUILD_ROOT%
+
+if not exist "%SOURCE_DIR%\CMakeLists.txt" (
+echo [ERROR] DevIL source not found
+pause
+exit /b 1
+)
+
+call :build x64 Debug
+call :build x64 Release
+call :build x86 Debug
+call :build x86 Release
+
+echo.
+echo =====================================
+echo        DEVIL BUILD DONE
+echo =====================================
+
+pause
+exit /b 0
+
+:build
+
+set PLATFORM=%1
+set CONFIG=%2
+
+if "%PLATFORM%"=="x86" (
+set ARCH=Win32
+) else (
+set ARCH=x64
+)
+
+set BUILD_DIR=%BUILD_ROOT%\build_tmp\%PLATFORM%\%CONFIG%
+set OUT_DIR=%BUILD_ROOT%\lib\%PLATFORM%\%CONFIG%
+
+echo.
+echo =====================================
+echo Building DevIL %PLATFORM% - %CONFIG%
+echo =====================================
+
+if exist "%BUILD_DIR%" (
+rmdir /s /q "%BUILD_DIR%"
+)
+
+mkdir "%BUILD_DIR%"
+
+if not exist "%OUT_DIR%" (
+mkdir "%OUT_DIR%"
+)
+
+cd /d "%BUILD_DIR%"
+
+REM =========================
+REM DEPENDENCIES
+REM =========================
+
+if "%CONFIG%"=="Debug" (
+
+set ZLIB_LIB=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\Debug\zd.lib
+set JPEG_LIB=%ROOT_DIR%\build\libjpeg-turbo\lib\%PLATFORM%\%CONFIG%\Debug\jpeg-static.lib
+set JPEG_GEN_INC=%ROOT_DIR%\build\libjpeg-turbo\build_tmp\%PLATFORM%\Debug
+set TIFF_LIB=%ROOT_DIR%\build\libtiff\lib\%PLATFORM%\Debug\tiffd.lib
+set GLUT_LIB=%ROOT_DIR%\build\freeglut\lib\%PLATFORM%\Debug\freeglut_staticd.lib
+set PNG_LIB=%ROOT_DIR%\build\libpng\lib\%PLATFORM%\Debug\Debug\libpng18_staticd.lib
+) else (
+set ZLIB_LIB=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\Release\z.lib
+set JPEG_LIB=%ROOT_DIR%\build\libjpeg-turbo\lib\%PLATFORM%\Release\jpeg-static.lib
+set JPEG_GEN_INC=%ROOT_DIR%\build\libjpeg-turbo\build_tmp\%PLATFORM%\Release
+set TIFF_LIB=%ROOT_DIR%\build\libtiff\lib\%PLATFORM%\Release\tiff.lib
+set GLUT_LIB=%ROOT_DIR%\build\freeglut\lib\%PLATFORM%\Release\freeglut_static.lib
+set PNG_LIB=%ROOT_DIR%\build\libpng\lib\%PLATFORM%\Release\Release\libpng18_static.lib
+)
+
+
+
+
+
+REM =========================
+REM INCLUDE PATHS
+REM =========================
+
+set ZLIB_INC=%ROOT_DIR%\zlib
+set JPEG_INC=%ROOT_DIR%\libjpeg-turbo\src
+set TIFF_INC=%ROOT_DIR%\libtiff\libtiff
+set TIFF_GEN_INC=%ROOT_DIR%\build\libtiff\build_tmp\%PLATFORM%\%CONFIG%\libtiff
+set GLUT_INC=%ROOT_DIR%\freeglut\include
+set PNG_INC=%ROOT_DIR%\libpng
+
+REM =========================
+REM OPENEXR / IMATH
+REM =========================
+
+set OPENEXR_DIR=%ROOT_DIR%\build\OpenEXR
+set IMATH_DIR=%ROOT_DIR%\build\Imath
+
+echo GLUT LIB:
+echo %GLUT_LIB%
+
+REM =========================
+REM ILU ERROR FİX
+REM =========================
+set ILU_SKIP_TRANSLATIONS=1
+
+
+REM =========================
+REM CMAKE CONFIGURE
+REM =========================
+
+cmake "%SOURCE_DIR%" ^
+-G "Visual Studio 17 2022" ^
+-A %ARCH% ^
+-DCMAKE_BUILD_TYPE=%CONFIG% ^
+-DBUILD_SHARED_LIBS=OFF ^
+-DCMAKE_POLICY_VERSION_MINIMUM=3.5 ^
+-DZLIB_LIBRARY="%ZLIB_LIB%" ^
+-DZLIB_INCLUDE_DIR="%ZLIB_INC%" ^
+-DPNG_LIBRARY="%PNG_LIB%" ^
+-DPNG_PNG_INCLUDE_DIR="%PNG_INC%" ^
+-DJPEG_LIBRARY="%JPEG_LIB%" ^
+-DJPEG_INCLUDE_DIR="%JPEG_INC%" ^
+-DTIFF_LIBRARY="%TIFF_LIB%" ^
+-DTIFF_INCLUDE_DIR="%TIFF_INC%" ^
+-DGLUT_glut_LIBRARY="%GLUT_LIB%" ^
+-DGLUT_INCLUDE_DIR="%GLUT_INC%" ^
+-DOPENEXR_ROOT="%OPENEXR_DIR%" ^
+-DOpenEXR_DIR="%OPENEXR_DIR%" ^
+-DImath_DIR="%IMATH_DIR%" ^
+-DCMAKE_C_FLAGS="/I%JPEG_GEN_INC% /I%TIFF_GEN_INC%" ^
+-DCMAKE_CXX_FLAGS="/I%JPEG_GEN_INC% /I%TIFF_GEN_INC%" ^
+-DILU_BUILD_TRANSLATIONS=OFF ^
+-DIL_NO_ERROR_TRANSLATION=ON
+
+
+
+if errorlevel 1 (
+echo [ERROR] Configure failed %PLATFORM% %CONFIG%
+pause
+exit /b 1
+)
+
+REM =========================
+REM BUILD
+REM =========================
+
+cmake --build . --config %CONFIG%
+
+if errorlevel 1 (
+echo [ERROR] Build failed %PLATFORM% %CONFIG%
+pause
+exit /b 1
+)
+
+REM =========================
+REM COPY OUTPUTS
+REM =========================
+
+echo [INFO] Copying outputs...
+
+for /r "%BUILD_DIR%" %%F in (*.lib *.dll *.exe) do (
+copy /Y "%%F" "%OUT_DIR%" >nul 2>&1
+)
+
+echo [OK] %PLATFORM% %CONFIG%
+
+exit /b 0
