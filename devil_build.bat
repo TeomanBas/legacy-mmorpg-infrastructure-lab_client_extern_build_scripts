@@ -84,6 +84,10 @@ set JPEG_GEN_INC=%ROOT_DIR%\build\libjpeg-turbo\build_tmp\%PLATFORM%\Debug
 set TIFF_LIB=%ROOT_DIR%\build\libtiff\lib\%PLATFORM%\Debug\tiffd.lib
 set GLUT_LIB=%ROOT_DIR%\build\freeglut\lib\%PLATFORM%\Debug\freeglut_staticd.lib
 set PNG_LIB=%ROOT_DIR%\build\libpng\lib\%PLATFORM%\Debug\Debug\libpng18_staticd.lib
+set LCMS2_LIB=%ROOT_DIR%\build\Little-CMS\lib\%PLATFORM%\%CONFIG%\lcms2d.lib
+set JASPER_LIB=%ROOT_DIR%\build\jasper\lib\%PLATFORM%\%CONFIG%\jasper.lib
+set MNG_LIB=%ROOT_DIR%\build\libmng\lib\%PLATFORM%\%CONFIG%\libmng.lib
+set SQUISH_LIB=%ROOT_DIR%\build\libsquish\lib\%PLATFORM%\%CONFIG%\Squishd.lib
 ) else (
 set ZLIB_LIB=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\Release\z.lib
 set JPEG_LIB=%ROOT_DIR%\build\libjpeg-turbo\lib\%PLATFORM%\Release\jpeg-static.lib
@@ -91,6 +95,10 @@ set JPEG_GEN_INC=%ROOT_DIR%\build\libjpeg-turbo\build_tmp\%PLATFORM%\Release
 set TIFF_LIB=%ROOT_DIR%\build\libtiff\lib\%PLATFORM%\Release\tiff.lib
 set GLUT_LIB=%ROOT_DIR%\build\freeglut\lib\%PLATFORM%\Release\freeglut_static.lib
 set PNG_LIB=%ROOT_DIR%\build\libpng\lib\%PLATFORM%\Release\Release\libpng18_static.lib
+set LCMS2_LIB=%ROOT_DIR%\build\Little-CMS\lib\%PLATFORM%\%CONFIG%\lcms2.lib
+set JASPER_LIB=%ROOT_DIR%\build\jasper\lib\%PLATFORM%\%CONFIG%\jasper.lib
+set MNG_LIB=%ROOT_DIR%\build\libmng\lib\%PLATFORM%\%CONFIG%\libmng.lib
+set SQUISH_LIB=%ROOT_DIR%\build\libsquish\lib\%PLATFORM%\%CONFIG%\Squish.lib
 )
 
 
@@ -107,7 +115,12 @@ set TIFF_INC=%ROOT_DIR%\libtiff\libtiff
 set TIFF_GEN_INC=%ROOT_DIR%\build\libtiff\build_tmp\%PLATFORM%\%CONFIG%\libtiff
 set GLUT_INC=%ROOT_DIR%\freeglut\include
 set PNG_INC=%ROOT_DIR%\libpng
-
+set LCMS2_INC=%ROOT_DIR%\Little-CMS\include
+set JASPER_INC=%ROOT_DIR%\jasper\src\libjasper\include
+set MNG_INC=%ROOT_DIR%\libmng-2.0.3
+set JAS_GEN_INC=%ROOT_DIR%\build\jasper\build_tmp\%PLATFORM%\%CONFIG%\src\libjasper\include
+set SQUISH_INC=%ROOT_DIR%\libsquish\lib\include\squish
+set SQUISH_GEN_INC=%ROOT_DIR%\build\libsquish\build_tmp\%PLATFORM%\%CONFIG%\lib\include
 REM =========================
 REM OPENEXR / IMATH
 REM =========================
@@ -147,10 +160,19 @@ cmake "%SOURCE_DIR%" ^
 -DOPENEXR_ROOT="%OPENEXR_DIR%" ^
 -DOpenEXR_DIR="%OPENEXR_DIR%" ^
 -DImath_DIR="%IMATH_DIR%" ^
--DCMAKE_C_FLAGS="/I%JPEG_GEN_INC% /I%TIFF_GEN_INC%" ^
--DCMAKE_CXX_FLAGS="/I%JPEG_GEN_INC% /I%TIFF_GEN_INC%" ^
+-DCMAKE_C_FLAGS="/I%JPEG_GEN_INC% /I%TIFF_GEN_INC% /I%JAS_GEN_INC% /I%SQUISH_GEN_INC% /I%SQUISH_INC%" ^
+-DCMAKE_CXX_FLAGS="/I%JPEG_GEN_INC% /I%TIFF_GEN_INC% /I%JAS_GEN_INC% /I%SQUISH_GEN_INC% /I%SQUISH_INC%" ^
 -DILU_BUILD_TRANSLATIONS=OFF ^
--DIL_NO_ERROR_TRANSLATION=ON
+-DIL_NO_ERROR_TRANSLATION=ON ^
+-DLCMS2_LIBRARY="%LCMS2_LIB%" ^
+-DLCMS2_INCLUDE_DIR="%LCMS2_INC%" ^
+-DJASPER_LIBRARIES="%JASPER_LIB%" ^
+-DJASPER_INCLUDE_DIR="%JASPER_INC%" ^
+-DMNG_LIBRARY="%MNG_LIB%" ^
+-DMNG_INCLUDE_DIR="%MNG_INC%" ^
+-DLIBSQUISH_LIBRARY="%SQUISH_LIB%" ^
+-DLIBSQUISH_LIBRARIES="%SQUISH_LIB%" ^
+-DLIBSQUISH_INCLUDE_DIR="%SQUISH_INC%"
 
 
 
