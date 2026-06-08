@@ -52,6 +52,12 @@ set ARCH=Win32
 set ARCH=x64
 )
 
+if "%CONFIG%"=="Debug" (
+    set RUNTIME=MultiThreadedDebug
+) else (
+    set RUNTIME=MultiThreaded
+)
+
 set BUILD_DIR=%BUILD_ROOT%\build_tmp\%PLATFORM%\%CONFIG%
 set OUT_DIR=%BUILD_ROOT%\lib\%PLATFORM%\%CONFIG%
 
@@ -78,23 +84,23 @@ REM =========================
 
 if "%CONFIG%"=="Debug" (
 
-set ZLIB_LIB=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\Debug\zd.lib
-set JPEG_LIB=%ROOT_DIR%\build\libjpeg-turbo\lib\%PLATFORM%\%CONFIG%\Debug\jpeg-static.lib
-set JPEG_GEN_INC=%ROOT_DIR%\build\libjpeg-turbo\build_tmp\%PLATFORM%\Debug
-set TIFF_LIB=%ROOT_DIR%\build\libtiff\lib\%PLATFORM%\Debug\tiffd.lib
-set GLUT_LIB=%ROOT_DIR%\build\freeglut\lib\%PLATFORM%\Debug\freeglut_staticd.lib
-set PNG_LIB=%ROOT_DIR%\build\libpng\lib\%PLATFORM%\Debug\Debug\libpng18_staticd.lib
+set ZLIB_LIB=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\zd.lib
+set JPEG_LIB=%ROOT_DIR%\build\libjpeg-turbo\lib\%PLATFORM%\%CONFIG%\jpeg-static.lib
+set JPEG_GEN_INC=%ROOT_DIR%\build\libjpeg-turbo\build_tmp\%PLATFORM%\%CONFIG%
+set TIFF_LIB=%ROOT_DIR%\build\libtiff\lib\%PLATFORM%\%CONFIG%\tiffd.lib
+set GLUT_LIB=%ROOT_DIR%\build\freeglut\lib\%PLATFORM%\%CONFIG%\freeglut_staticd.lib
+set PNG_LIB=%ROOT_DIR%\build\libpng\lib\%PLATFORM%\%CONFIG%\libpng18_staticd.lib
 set LCMS2_LIB=%ROOT_DIR%\build\Little-CMS\lib\%PLATFORM%\%CONFIG%\lcms2d.lib
 set JASPER_LIB=%ROOT_DIR%\build\jasper\lib\%PLATFORM%\%CONFIG%\jasper.lib
 set MNG_LIB=%ROOT_DIR%\build\libmng\lib\%PLATFORM%\%CONFIG%\libmng.lib
 set SQUISH_LIB=%ROOT_DIR%\build\libsquish\lib\%PLATFORM%\%CONFIG%\Squishd.lib
 ) else (
-set ZLIB_LIB=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\Release\z.lib
-set JPEG_LIB=%ROOT_DIR%\build\libjpeg-turbo\lib\%PLATFORM%\Release\jpeg-static.lib
-set JPEG_GEN_INC=%ROOT_DIR%\build\libjpeg-turbo\build_tmp\%PLATFORM%\Release
-set TIFF_LIB=%ROOT_DIR%\build\libtiff\lib\%PLATFORM%\Release\tiff.lib
-set GLUT_LIB=%ROOT_DIR%\build\freeglut\lib\%PLATFORM%\Release\freeglut_static.lib
-set PNG_LIB=%ROOT_DIR%\build\libpng\lib\%PLATFORM%\Release\Release\libpng18_static.lib
+set ZLIB_LIB=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\z.lib
+set JPEG_LIB=%ROOT_DIR%\build\libjpeg-turbo\lib\%PLATFORM%\jpeg-static.lib
+set JPEG_GEN_INC=%ROOT_DIR%\build\libjpeg-turbo\build_tmp\%PLATFORM%\%CONFIG%
+set TIFF_LIB=%ROOT_DIR%\build\libtiff\lib\%PLATFORM%\%CONFIG%\tiff.lib
+set GLUT_LIB=%ROOT_DIR%\build\freeglut\lib\%PLATFORM%\%CONFIG%\freeglut_static.lib
+set PNG_LIB=%ROOT_DIR%\build\libpng\lib\%PLATFORM%\%CONFIG%\libpng18_static.lib
 set LCMS2_LIB=%ROOT_DIR%\build\Little-CMS\lib\%PLATFORM%\%CONFIG%\lcms2.lib
 set JASPER_LIB=%ROOT_DIR%\build\jasper\lib\%PLATFORM%\%CONFIG%\jasper.lib
 set MNG_LIB=%ROOT_DIR%\build\libmng\lib\%PLATFORM%\%CONFIG%\libmng.lib
@@ -172,7 +178,8 @@ cmake "%SOURCE_DIR%" ^
 -DMNG_INCLUDE_DIR="%MNG_INC%" ^
 -DLIBSQUISH_LIBRARY="%SQUISH_LIB%" ^
 -DLIBSQUISH_LIBRARIES="%SQUISH_LIB%" ^
--DLIBSQUISH_INCLUDE_DIR="%SQUISH_INC%"
+-DLIBSQUISH_INCLUDE_DIR="%SQUISH_INC%" ^
+-DCMAKE_MSVC_RUNTIME_LIBRARY="%RUNTIME%"
 
 
 

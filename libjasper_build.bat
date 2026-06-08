@@ -59,6 +59,12 @@ set ARCH=Win32
 set ARCH=x64
 )
 
+if "%CONFIG%"=="Debug" (
+    set RUNTIME=MultiThreadedDebug
+) else (
+    set RUNTIME=MultiThreaded
+)
+
 set BUILD_DIR=%BUILD_ROOT%\build_tmp\%PLATFORM%\%CONFIG%
 set OUT_DIR=%BUILD_ROOT%\lib\%PLATFORM%\%CONFIG%
 
@@ -82,7 +88,8 @@ cmake "%SOURCE_DIR%" ^
 -A %ARCH% ^
 -DCMAKE_BUILD_TYPE=%CONFIG% ^
 -DCMAKE_INSTALL_PREFIX="%OUT_DIR%" ^
--DBUILD_SHARED_LIBS=OFF
+-DBUILD_SHARED_LIBS=OFF ^
+-DCMAKE_MSVC_RUNTIME_LIBRARY="%RUNTIME%"
 
 if errorlevel 1 (
 echo [ERROR] Configure failed %PLATFORM% %CONFIG%

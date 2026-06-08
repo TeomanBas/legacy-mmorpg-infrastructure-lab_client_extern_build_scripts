@@ -58,12 +58,19 @@ for %%A in (x86 x64) do (
             set GENERATOR=Visual Studio 17 2022
             set PLATFORM=x64
         )
+        if %%C=="Debug" (
+            set RUNTIME=MultiThreadedDebug
+        ) else (
+            set RUNTIME=MultiThreaded
+        )
 
         cmake -S "%SRC%" ^
               -B "!BUILD_DIR!" ^
               -G "!GENERATOR!" ^
               -A "!PLATFORM!" ^
-              -DCMAKE_BUILD_TYPE=%%C
+              -DCMAKE_BUILD_TYPE=%%C ^
+              -DBUILD_SHARED_LIBS=OFF ^
+              -DCMAKE_MSVC_RUNTIME_LIBRARY="%RUNTIME%"
 
         if errorlevel 1 (
             echo [ERROR] CMake configure failed: %%A %%C

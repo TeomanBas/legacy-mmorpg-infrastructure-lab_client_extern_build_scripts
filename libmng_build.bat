@@ -70,6 +70,12 @@ set ARCH=Win32
 set ARCH=x64
 )
 
+if "%CONFIG%"=="Debug" (
+    set RUNTIME=MultiThreadedDebug
+) else (
+    set RUNTIME=MultiThreaded
+)
+
 set BUILD_DIR=%BUILD_ROOT%\libmng\build_tmp\%PLATFORM%\%CONFIG%
 set OUT_DIR=%BUILD_ROOT%\libmng\lib\%PLATFORM%\%CONFIG%
 
@@ -94,9 +100,9 @@ REM =========================
 if /I "%CONFIG%"=="Debug" (
 
 
-set ZLIB_LIB=%BUILD_ROOT%\zlib\lib\%PLATFORM%\Debug\Debug\zd.lib
-set JPEG_LIB=%BUILD_ROOT%\libjpeg-turbo\lib\%PLATFORM%\Debug\Debug\jpeg-static.lib
-set LCMS2_LIB=%BUILD_ROOT%\Little-CMS\lib\%PLATFORM%\Debug\Debug\lcms2d.lib
+set ZLIB_LIB=%BUILD_ROOT%\zlib\lib\%PLATFORM%\Debug\zd.lib
+set JPEG_LIB=%BUILD_ROOT%\libjpeg-turbo\lib\%PLATFORM%\Debug\jpeg-static.lib
+set LCMS2_LIB=%BUILD_ROOT%\Little-CMS\lib\%PLATFORM%\Debug\lcms2d.lib
 
 set JPEG_GEN_DIR=%JPEG_BUILD_DIR%\build_tmp\%PLATFORM%\Debug
 
@@ -104,9 +110,9 @@ set JPEG_GEN_DIR=%JPEG_BUILD_DIR%\build_tmp\%PLATFORM%\Debug
 ) else (
 
 
-set ZLIB_LIB=%BUILD_ROOT%\zlib\lib\%PLATFORM%\Release\Release\z.lib
-set JPEG_LIB=%BUILD_ROOT%\libjpeg-turbo\lib\%PLATFORM%\Release\Release\jpeg-static.lib
-set LCMS2_LIB=%BUILD_ROOT%\Little-CMS\lib\%PLATFORM%\Release\Release\lcms2.lib
+set ZLIB_LIB=%BUILD_ROOT%\zlib\lib\%PLATFORM%\Release\z.lib
+set JPEG_LIB=%BUILD_ROOT%\libjpeg-turbo\lib\%PLATFORM%\Release\jpeg-static.lib
+set LCMS2_LIB=%BUILD_ROOT%\Little-CMS\lib\%PLATFORM%\Release\lcms2.lib
 
 set JPEG_GEN_DIR=%JPEG_BUILD_DIR%\build_tmp\%PLATFORM%\Release
 
@@ -147,7 +153,8 @@ cmake "%SOURCE_DIR%" ^
 -DLCMS2_INCLUDE_DIR="%LCMS2_INCLUDE_DIR%" ^
 -DZLIB_LIBRARY="%ZLIB_LIB%" ^
 -DZLIB_INCLUDE_DIR="%ZLIB_DIR%" ^
--DCMAKE_C_FLAGS="/I"%JPEG_SRC_DIR%" /I"%JPEG_GEN_DIR%""
+-DCMAKE_C_FLAGS="/I"%JPEG_SRC_DIR%" /I"%JPEG_GEN_DIR%"" ^
+-DCMAKE_MSVC_RUNTIME_LIBRARY="%RUNTIME%"
 
 if errorlevel 1 (
 echo.

@@ -68,6 +68,12 @@ if "%PLATFORM%"=="x86" (
     set ARCH=x64
 )
 
+if "%CONFIG%"=="Debug" (
+    set RUNTIME=MultiThreadedDebug
+) else (
+    set RUNTIME=MultiThreaded
+)
+
 set BUILD_DIR=%BUILD_ROOT%\build_tmp\%PLATFORM%\%CONFIG%
 set OUT_DIR=%BUILD_ROOT%\lib\%PLATFORM%\%CONFIG%
 
@@ -92,7 +98,8 @@ cmake "%SOURCE_DIR%" ^
 -DCMAKE_BUILD_TYPE=%CONFIG% ^
 -DBUILD_SHARED_LIBS=OFF ^
 -DCMAKE_POSITION_INDEPENDENT_CODE=ON ^
--DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL
+-DBUILD_SHARED_LIBS=OFF ^
+-DCMAKE_MSVC_RUNTIME_LIBRARY="%RUNTIME%"
 
 if errorlevel 1 (
     echo [ERROR] Configure failed %PLATFORM% %CONFIG%

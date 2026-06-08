@@ -70,6 +70,13 @@ if "%PLATFORM%"=="x86" (
     set ARCH=x64
 )
 
+if "%CONFIG%"=="Debug" (
+    set RUNTIME=MultiThreadedDebug
+) else (
+    set RUNTIME=MultiThreaded
+)
+
+
 set BUILD_DIR=%BUILD_ROOT%\build_tmp\%PLATFORM%\%CONFIG%
 set OUT_DIR=%BUILD_ROOT%\lib\%PLATFORM%\%CONFIG%
 
@@ -90,13 +97,13 @@ REM =========================
 
 if "%CONFIG%"=="Debug" (
 
-    set ZLIB_LIB=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\Debug\zd.lib
-    set ZSTD_LIB=%ROOT_DIR%\build\zstd\lib\%PLATFORM%\Debug\zstd_static.lib
+    set ZLIB_LIB=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\zd.lib
+    set ZSTD_LIB=%ROOT_DIR%\build\zstd\lib\%PLATFORM%\%CONFIG%\zstd_static.lib
 
 ) else (
 
-    set ZLIB_LIB=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\Release\z.lib
-    set ZSTD_LIB=%ROOT_DIR%\build\zstd\lib\%PLATFORM%\Release\zstd_static.lib
+    set ZLIB_LIB=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\z.lib
+    set ZSTD_LIB=%ROOT_DIR%\build\zstd\lib\%PLATFORM%\%CONFIG%\zstd_static.lib
 
 )
 
@@ -128,7 +135,8 @@ cmake "%SOURCE_DIR%" ^
 -DZLIB_LIBRARY="%ZLIB_LIB%" ^
 -DZLIB_INCLUDE_DIR="%ZLIB_INC%" ^
 -DZSTD_LIBRARY="%ZSTD_LIB%" ^
--DZSTD_INCLUDE_DIR="%ZSTD_INC%"
+-DZSTD_INCLUDE_DIR="%ZSTD_INC%" ^
+-DCMAKE_MSVC_RUNTIME_LIBRARY="%RUNTIME%"
 
 if errorlevel 1 (
     echo [ERROR] Configure failed %PLATFORM% %CONFIG%

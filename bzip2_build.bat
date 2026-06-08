@@ -50,7 +50,10 @@ REM =========================
 set PLATFORM=%1
 
 set BUILD_DIR=%BUILD_ROOT%\build_tmp\%PLATFORM%
-set OUT_DIR=%BUILD_ROOT%\lib\%PLATFORM%
+REM =========================
+REM Debug directory or release directory 
+REM =========================
+set OUT_DIR=%BUILD_ROOT%\lib\%PLATFORM%\Debug\
 
 echo.
 echo =====================================
@@ -87,8 +90,15 @@ echo [INFO] Cleaning...
 nmake -f makefile.msc clean >nul 2>&1
 
 echo [INFO] Building...
-nmake -f makefile.msc
-
+REM =========================
+REM for release 
+REM =========================
+REM nmake -f makefile.msc CFLAGS="-DWIN32 -MT -Ox -D_FILE_OFFSET_BITS=64 -nologo"
+REM =========================
+REM for debug 
+REM =========================
+nmake -f makefile.msc CFLAGS="-DWIN32 -MTd -Od -Zi -D_FILE_OFFSET_BITS=64 -nologo"
+REM =========================
 if errorlevel 1 (
     echo [ERROR] Build failed for %PLATFORM%
     exit /b 1

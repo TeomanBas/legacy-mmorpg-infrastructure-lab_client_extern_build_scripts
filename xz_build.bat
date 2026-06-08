@@ -58,6 +58,12 @@ if "%PLATFORM%"=="x86" (
     set ARCH=x64
 )
 
+if "%CONFIG%"=="Debug" (
+    set RUNTIME=MultiThreadedDebug
+) else (
+    set RUNTIME=MultiThreaded
+)
+
 set BUILD_DIR=%BUILD_ROOT%\build_tmp\%PLATFORM%\%CONFIG%
 set OUT_DIR=%BUILD_ROOT%\lib\%PLATFORM%\%CONFIG%
 
@@ -82,7 +88,8 @@ cmake "%SOURCE_DIR%" ^
 -DCMAKE_POLICY_VERSION_MINIMUM=3.5 ^
 -DBUILD_SHARED_LIBS=OFF ^
 -DENABLE_TESTS=OFF ^
--DENABLE_DOC=OFF
+-DENABLE_DOC=OFF ^
+-DCMAKE_MSVC_RUNTIME_LIBRARY="%RUNTIME%"
 
 if errorlevel 1 (
     echo [ERROR] CMake configure failed %PLATFORM% %CONFIG%

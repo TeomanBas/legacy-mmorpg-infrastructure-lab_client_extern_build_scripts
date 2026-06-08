@@ -72,6 +72,12 @@ if "%PLATFORM%"=="x86" (
     set ARCH=x64
 )
 
+if "%CONFIG%"=="Debug" (
+    set RUNTIME=MultiThreadedDebug
+) else (
+    set RUNTIME=MultiThreaded
+)
+
 REM =========================
 REM SELECT ZLIB LIB NAME
 REM =========================
@@ -91,8 +97,8 @@ REM PATHS
 REM =========================
 
 set BUILD_DIR=%BUILD_ROOT%\build_tmp\%PLATFORM%\%CONFIG%
-set OUT_DIR=%BUILD_ROOT%\lib\%PLATFORM%\%CONFIG%
-set ZLIB_LIB_PATH=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\%CONFIG%\%ZLIB_LIB%
+set OUT_DIR=%BUILD_ROOT%\lib\%PLATFORM%
+set ZLIB_LIB_PATH=%ROOT_DIR%\build\zlib\lib\%PLATFORM%\%CONFIG%\%ZLIB_LIB%
 
 echo.
 echo =====================================
@@ -117,7 +123,9 @@ cmake "%SOURCE_DIR%" ^
 -DZLIB_LIBRARY="%ZLIB_LIB_PATH%" ^
 -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY="%OUT_DIR%" ^
 -DCMAKE_LIBRARY_OUTPUT_DIRECTORY="%OUT_DIR%" ^
--DCMAKE_RUNTIME_OUTPUT_DIRECTORY="%OUT_DIR%"
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY="%OUT_DIR%" ^
+-DBUILD_SHARED_LIBS=OFF ^
+-DCMAKE_MSVC_RUNTIME_LIBRARY="%RUNTIME%"
 
 if errorlevel 1 (
     echo [ERROR] Configure failed %PLATFORM% %CONFIG%
